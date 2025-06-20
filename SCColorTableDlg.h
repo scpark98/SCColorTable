@@ -4,9 +4,9 @@
 
 #pragma once
 
-#include "../Common/ResizeCtrl.h"
-#include "../Common/CEdit/SCEdit/SCEdit.h"
-#include "../Common/CListCtrl/CVtListCtrlEx/VtListCtrlEx.h"
+#include "ResizeCtrl.h"
+#include "CEdit/SCEdit/SCEdit.h"
+#include "CListCtrl/CVtListCtrlEx/VtListCtrlEx.h"
 
 // CSCColorTableDlg 대화 상자
 class CSCColorTableDlg : public CDialogEx
@@ -38,6 +38,8 @@ protected:
 
 	void					init_list();
 
+	//a, r, g, b 값을 받아 4개의 폼에 맞게 변형하여 UI를 갱신시키고 해당 색을 리스트에서 찾아서 선택 상태로 표시한다.
+	void					fill_color_values(int a, int r, int g, int b);
 
 // 구현입니다.
 protected:
@@ -63,4 +65,6 @@ public:
 	afx_msg void OnEnChangeEditArgb();
 	afx_msg void OnEnChangeEditRgba();
 	afx_msg void OnEnChangeEditInt();
+	afx_msg void OnLvnItemChangedList(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnNMClickList(NMHDR* pNMHDR, LRESULT* pResult);
 };

@@ -74,9 +74,11 @@ BEGIN_MESSAGE_MAP(CSCColorTableDlg, CDialogEx)
 	ON_BN_CLICKED(IDCANCEL, &CSCColorTableDlg::OnBnClickedCancel)
 	ON_WM_WINDOWPOSCHANGED()
 	ON_NOTIFY(IPN_FIELDCHANGED, IDC_RGBA, &CSCColorTableDlg::OnIpnFieldchangedRgba)
-	ON_EN_CHANGE(IDC_EDIT_ARGB, &CSCColorTableDlg::OnEnChangeEditArgb)
-	ON_EN_CHANGE(IDC_EDIT_RGBA, &CSCColorTableDlg::OnEnChangeEditRgba)
-	ON_EN_CHANGE(IDC_EDIT_INT, &CSCColorTableDlg::OnEnChangeEditInt)
+	//ON_EN_CHANGE(IDC_EDIT_ARGB, &CSCColorTableDlg::OnEnChangeEditArgb)
+	//ON_EN_CHANGE(IDC_EDIT_RGBA, &CSCColorTableDlg::OnEnChangeEditRgba)
+	//ON_EN_CHANGE(IDC_EDIT_INT, &CSCColorTableDlg::OnEnChangeEditInt)
+	ON_NOTIFY(LVN_ITEMCHANGED, IDC_LIST, &CSCColorTableDlg::OnLvnItemChangedList)
+	ON_NOTIFY(NM_CLICK, IDC_LIST, &CSCColorTableDlg::OnNMClickList)
 END_MESSAGE_MAP()
 
 
@@ -242,6 +244,25 @@ BOOL CSCColorTableDlg::PreTranslateMessage(MSG* pMsg)
 	return CDialogEx::PreTranslateMessage(pMsg);
 }
 
+//a, r, g, b 값을 받아 4개의 폼에 맞게 변형하여 UI를 갱신시키고 해당 색을 리스트에서 찾아서 선택 상태로 표시한다.
+void CSCColorTableDlg::fill_color_values(int a, int r, int g, int b)
+{
+	CString str;
+
+	str.Format(_T("%02X%02X%02X%02X"), r, g, b, a);
+	m_edit_rgba.set_text(str);
+
+	str.Format(_T("%02X%02X%02X%02X"), a, r, g, b);
+	m_edit_argb.set_text(str);
+
+	str.Format(_T("%d"), Gdiplus::Color(a, r, g, b).GetValue());
+	m_edit_int.set_text(str);
+
+	//select_color_item()
+	//std::string cr_name = CSCColorList::get_color_name(Gdiplus::Color(a, r, g, b));
+
+}
+
 void CSCColorTableDlg::OnIpnFieldchangedRgba(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	LPNMIPADDRESS pIPAddr = reinterpret_cast<LPNMIPADDRESS>(pNMHDR);
@@ -251,10 +272,10 @@ void CSCColorTableDlg::OnIpnFieldchangedRgba(NMHDR* pNMHDR, LRESULT* pResult)
 
 	CString str;
 
-	str.Format(_T("%02X%02X%02X%02X\n"), r, g, b, a);
+	str.Format(_T("%02X%02X%02X%02X"), r, g, b, a);
 	m_edit_rgba.set_text(str);
 
-	str.Format(_T("%02X%02X%02X%02X\n"), a, r, g, b);
+	str.Format(_T("%02X%02X%02X%02X"), a, r, g, b);
 	m_edit_argb.set_text(str);
 
 	str.Format(_T("%d"), Gdiplus::Color(a, r, g, b).GetValue());
@@ -266,17 +287,95 @@ void CSCColorTableDlg::OnIpnFieldchangedRgba(NMHDR* pNMHDR, LRESULT* pResult)
 void CSCColorTableDlg::OnEnChangeEditArgb()
 {
 	CString argb = m_edit_argb.get_text();
+
+	if (argb.GetLength() > 1 && argb.Left(1) == _T("#"))
+		argb = argb.Mid(1);
+
+	if (argb.GetLength() > 2 && argb.Left(2) == _T("0x"))
+		argb = argb.Mid(2);
+
 	if (argb.GetLength() != 8)
 		return;
+
+	CString str;
+	int a = _ttoi(argb.Left(2));
+	int r = _ttoi(argb.Mid(2, 2));
+	int g = _ttoi(argb.Mid(4, 2));
+	int b = _ttoi(argb.Mid(6, 2));
+
+	m_ip_rgba.SetAddress(a, r, g, b);
+
+	str.Format(_T("%02X%02X%02X%02X"), r, g, b, a);
+	m_edit_rgba.set_text(str);
+
+	str.Format(_T("%d"), Gdiplus::Color(a, r, g, b).GetValue());
+	m_edit_int.set_text(str);
 }
 
 void CSCColorTableDlg::OnEnChangeEditRgba()
 {
 	CString rgba = m_edit_rgba.get_text();
+
+	if (rgba.GetLength() > 1 && rgba.Left(1) == _T("#"))
+		rgba = rgba.Mid(1);
+
+	if (rgba.GetLength() > 2 && rgba.Left(2) == _T("0x"))
+		rgba = rgba.Mid(2);
+
 	if (rgba.GetLength() != 8)
 		return;
+
+	CString str;
+	int r = _ttoi(rgba.Left(2));
+	int g = _ttoi(rgba.Mid(2, 2));
+	int b = _ttoi(rgba.Mid(4, 2));
+	int a = _ttoi(rgba.Mid(6, 2));
+
+	m_ip_rgba.SetAddress(a, r, g, b);
+
+	str.Format(_T("%02X%02X%02X%02X"), r, g, b, a);
+	m_edit_argb.set_text(str);
+
+	str.Format(_T("%d"), Gdiplus::Color(a, r, g, b).GetValue());
+	m_edit_int.set_text(str);
 }
 
 void CSCColorTableDlg::OnEnChangeEditInt()
 {
+	Gdiplus::ARGB value = _ttoi(m_edit_int.get_text());
+	Gdiplus::Color cr(value);
+
+	int r = cr.GetR();
+	int g = cr.GetG();
+	int b = cr.GetB();
+	int a = cr.GetA();
+
+	m_ip_rgba.SetAddress(a, r, g, b);
+
+	CString str;
+
+	str.Format(_T("%02X%02X%02X%02X"), r, g, b, a);
+	m_edit_argb.set_text(str);
+
+	str.Format(_T("%02X%02X%02X%02X"), r, g, b, a);
+	m_edit_argb.set_text(str);
+}
+
+void CSCColorTableDlg::OnLvnItemChangedList(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	LPNMLISTVIEW pNMLV = reinterpret_cast<LPNMLISTVIEW>(pNMHDR);
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	*pResult = 0;
+}
+
+void CSCColorTableDlg::OnNMClickList(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	LPNMITEMACTIVATE pNMItemActivate = reinterpret_cast<LPNMITEMACTIVATE>(pNMHDR);
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	int item = pNMItemActivate->iItem;
+	Gdiplus::ARGB value = _ttoi(m_list.get_text(item, col_value));
+	Gdiplus::Color cr(value);
+	fill_color_values(cr.GetA(), cr.GetR(), cr.GetG(), cr.GetB());
+
+	*pResult = 0;
 }
