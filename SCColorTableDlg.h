@@ -58,7 +58,8 @@ public:
 	CSCEdit m_edit_argb;
 	CSCEdit m_edit_rgba;
 	CSCEdit m_edit_int;
-	CVtListCtrlEx m_list;
+	CVtListCtrlEx m_list0;
+	CVtListCtrlEx m_list1;
 	afx_msg void OnWindowPosChanged(WINDOWPOS* lpwndpos);
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 	afx_msg void OnIpnFieldchangedRgba(NMHDR* pNMHDR, LRESULT* pResult);

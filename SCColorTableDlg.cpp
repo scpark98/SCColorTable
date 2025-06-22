@@ -63,7 +63,8 @@ void CSCColorTableDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_EDIT_ARGB, m_edit_argb);
 	DDX_Control(pDX, IDC_EDIT_RGBA, m_edit_rgba);
 	DDX_Control(pDX, IDC_EDIT_INT, m_edit_int);
-	DDX_Control(pDX, IDC_LIST, m_list);
+	DDX_Control(pDX, IDC_LIST, m_list0);
+	DDX_Control(pDX, IDC_LIST1, m_list1);
 }
 
 BEGIN_MESSAGE_MAP(CSCColorTableDlg, CDialogEx)
@@ -73,7 +74,7 @@ BEGIN_MESSAGE_MAP(CSCColorTableDlg, CDialogEx)
 	ON_BN_CLICKED(IDOK, &CSCColorTableDlg::OnBnClickedOk)
 	ON_BN_CLICKED(IDCANCEL, &CSCColorTableDlg::OnBnClickedCancel)
 	ON_WM_WINDOWPOSCHANGED()
-	ON_NOTIFY(IPN_FIELDCHANGED, IDC_RGBA, &CSCColorTableDlg::OnIpnFieldchangedRgba)
+	//ON_NOTIFY(IPN_FIELDCHANGED, IDC_RGBA, &CSCColorTableDlg::OnIpnFieldchangedRgba)
 	//ON_EN_CHANGE(IDC_EDIT_ARGB, &CSCColorTableDlg::OnEnChangeEditArgb)
 	//ON_EN_CHANGE(IDC_EDIT_RGBA, &CSCColorTableDlg::OnEnChangeEditRgba)
 	//ON_EN_CHANGE(IDC_EDIT_INT, &CSCColorTableDlg::OnEnChangeEditInt)
@@ -115,7 +116,8 @@ BOOL CSCColorTableDlg::OnInitDialog()
 
 	// TODO: 여기에 추가 초기화 작업을 추가합니다.
 	m_resize.Create(this);
-	m_resize.Add(IDC_LIST, 0, 0, 100, 100);
+	m_resize.Add(IDC_LIST, 0, 0, 50, 100);
+	m_resize.Add(IDC_LIST1, 50, 0, 50, 100);
 
 	init_list();
 
@@ -126,11 +128,17 @@ BOOL CSCColorTableDlg::OnInitDialog()
 
 void CSCColorTableDlg::init_list()
 {
-	m_list.set_headings(_T("Index,40;Name,200;Hex,60;Decimal,100;Value,100"));
-	m_list.load_column_width(&theApp, _T("color table list"));
-	m_list.set_font_size(8);
-	m_list.set_header_height(28);
-	m_list.set_line_height(30);
+	m_list0.set_headings(_T("Index,40;Name,200;Hex,60;Decimal,100;Value,100"));
+	m_list0.load_column_width(&theApp, _T("color table list"));
+	m_list0.set_font_size(8);
+	m_list0.set_header_height(28);
+	m_list0.set_line_height(30);
+
+	m_list1.set_headings(_T("Index,40;Name,200;Hex,60;Decimal,100;Value,100"));
+	m_list1.load_column_width(&theApp, _T("color table list"));
+	m_list1.set_font_size(8);
+	m_list1.set_header_height(28);
+	m_list1.set_line_height(30);
 
 	m_cr_list = CSCColorList::get_color_list();
 
@@ -144,9 +152,19 @@ void CSCColorTableDlg::init_list()
 		cr = m_cr_list[i].second;
 		hex = get_color_string(cr.ToCOLORREF());
 		rgb.Format(_T("%d, %d, %d"), cr.GetR(), cr.GetG(), cr.GetB());
-		index = m_list.insert_item(i, -1, i2S(i), CString(m_cr_list[i].first.c_str()), hex, rgb, i2S(cr.GetValue(), true));
-		m_list.set_back_color(index, -1, m_cr_list[i].second);
-		m_list.set_text_color(index, -1, get_distinct_gcolor(m_cr_list[i].second));
+
+		if (i < 66)
+		{
+			index = m_list0.insert_item(i, -1, i2S(i), CString(m_cr_list[i].first.c_str()), hex, rgb, i2S(cr.GetValue(), true));
+			m_list0.set_back_color(index, -1, m_cr_list[i].second);
+			m_list0.set_text_color(index, -1, get_distinct_gcolor(m_cr_list[i].second));
+		}
+		else
+		{
+			index = m_list1.insert_item(i - 66, -1, i2S(i), CString(m_cr_list[i].first.c_str()), hex, rgb, i2S(cr.GetValue(), true));
+			m_list1.set_back_color(index, -1, m_cr_list[i].second);
+			m_list1.set_text_color(index, -1, get_distinct_gcolor(m_cr_list[i].second));
+		}
 	}
 }
 
@@ -249,13 +267,15 @@ void CSCColorTableDlg::fill_color_values(int a, int r, int g, int b)
 {
 	CString str;
 
+	m_ip_rgba.SetAddress(a, r, g, b);
+
 	str.Format(_T("%02X%02X%02X%02X"), r, g, b, a);
 	m_edit_rgba.set_text(str);
 
 	str.Format(_T("%02X%02X%02X%02X"), a, r, g, b);
 	m_edit_argb.set_text(str);
 
-	str.Format(_T("%d"), Gdiplus::Color(a, r, g, b).GetValue());
+	str.Format(_T("%lu"), Gdiplus::Color(a, r, g, b).GetValue());
 	m_edit_int.set_text(str);
 
 	//select_color_item()
@@ -365,6 +385,15 @@ void CSCColorTableDlg::OnLvnItemChangedList(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	LPNMLISTVIEW pNMLV = reinterpret_cast<LPNMLISTVIEW>(pNMHDR);
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	int item = pNMLV->iItem;
+	CString text = m_list0.get_text(item, col_value);
+
+	text.Replace(_T(","), _T(""));
+
+	Gdiplus::ARGB value = _ttoi64(text);
+	Gdiplus::Color cr(value);
+	fill_color_values(cr.GetA(), cr.GetR(), cr.GetG(), cr.GetB());
+
 	*pResult = 0;
 }
 
@@ -372,10 +401,13 @@ void CSCColorTableDlg::OnNMClickList(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	LPNMITEMACTIVATE pNMItemActivate = reinterpret_cast<LPNMITEMACTIVATE>(pNMHDR);
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	int item = pNMItemActivate->iItem;
-	Gdiplus::ARGB value = _ttoi(m_list.get_text(item, col_value));
-	Gdiplus::Color cr(value);
-	fill_color_values(cr.GetA(), cr.GetR(), cr.GetG(), cr.GetB());
+	//int item = pNMItemActivate->iItem;
+	//CString text = m_list.get_text(item, col_value);
+	//text.Replace(_T(","), _T(""));
+
+	//Gdiplus::ARGB value = _ttoi64(text);
+	//Gdiplus::Color cr(value);
+	//fill_color_values(cr.GetA(), cr.GetR(), cr.GetG(), cr.GetB());
 
 	*pResult = 0;
 }
