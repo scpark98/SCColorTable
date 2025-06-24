@@ -8,6 +8,8 @@
 #include "CEdit/SCEdit/SCEdit.h"
 #include "CListCtrl/CVtListCtrlEx/VtListCtrlEx.h"
 
+#include "CIPAddressCtrl/SCIPAddressCtrl/SCIPAddressCtrl.h"
+
 // CSCColorTableDlg 대화 상자
 class CSCColorTableDlg : public CDialogEx
 {
@@ -39,7 +41,9 @@ protected:
 	void					init_list();
 
 	//a, r, g, b 값을 받아 4개의 폼에 맞게 변형하여 UI를 갱신시키고 해당 색을 리스트에서 찾아서 선택 상태로 표시한다.
-	void					fill_color_values(int a, int r, int g, int b);
+	void					fill_color_values(int r, int g, int b, int a, bool find_list);
+
+	LRESULT					on_message_CSCIPAddressCtrl(WPARAM wParam, LPARAM lParam);
 
 // 구현입니다.
 protected:
@@ -54,7 +58,7 @@ protected:
 public:
 	afx_msg void OnBnClickedOk();
 	afx_msg void OnBnClickedCancel();
-	CIPAddressCtrl m_ip_rgba;
+	CSCIPAddressCtrl m_ip_rgba;
 	CSCEdit m_edit_argb;
 	CSCEdit m_edit_rgba;
 	CSCEdit m_edit_int;
@@ -67,5 +71,6 @@ public:
 	afx_msg void OnEnChangeEditRgba();
 	afx_msg void OnEnChangeEditInt();
 	afx_msg void OnLvnItemChangedList(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnNMClickList(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnLvnItemChangedList1(NMHDR* pNMHDR, LRESULT* pResult);
+	CSCEdit m_edit_color;
 };

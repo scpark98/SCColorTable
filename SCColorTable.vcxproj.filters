@@ -72,6 +72,9 @@
     <ClInclude Include="..\Common\CEdit\SCEdit\SCEdit.h">
       <Filter>Common</Filter>
     </ClInclude>
+    <ClInclude Include="..\Common\CIPAddressCtrl\SCIPAddressCtrl\SCIPAddressCtrl.h">
+      <Filter>Common</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SCColorTable.cpp">
@@ -111,6 +114,9 @@
       <Filter>Common</Filter>
     </ClCompile>
     <ClCompile Include="..\Common\CEdit\SCEdit\SCEdit.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\CIPAddressCtrl\SCIPAddressCtrl\SCIPAddressCtrl.cpp">
       <Filter>Common</Filter>
     </ClCompile>
   </ItemGroup>
