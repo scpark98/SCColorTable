@@ -131,7 +131,7 @@ BOOL CSCColorTableDlg::OnInitDialog()
 	//m_edit_color.set_line_align()에서는 height가 달라지지 않는데도 RestoreWindowPosition() 앞에서 호출하면 적용되지 않는다.
 	m_edit_color.set_text_color(gRGB(0, 0, 255));
 	m_edit_color.set_back_color(Gdiplus::Color::RosyBrown);
-	m_edit_color.set_line_align(DT_CENTER | DT_VCENTER);
+	//m_edit_color.set_line_align(DT_CENTER | DT_VCENTER);
 
 	init_list();
 
@@ -320,7 +320,7 @@ void CSCColorTableDlg::fill_color_values(int r, int g, int b, int a, bool find_l
 
 	//select_color_item()
 	CString cr_name(CSCColorList::get_color_name(Gdiplus::Color(a, r, g, b), false).c_str());
-	TRACE(_T("name = %s\n"), cr_name);
+	//TRACE(_T("name = %s\n"), cr_name);
 
 	m_edit_color.set_color(get_distinct_color(Gdiplus::Color(a, r, g, b)), Gdiplus::Color(a, r, g, b));
 	m_edit_color.set_text(cr_name);
