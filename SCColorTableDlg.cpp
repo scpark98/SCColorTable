@@ -127,10 +127,15 @@ BOOL CSCColorTableDlg::OnInitDialog()
 	m_edit_argb.SetLimitText(8);
 	m_edit_rgba.SetLimitText(8);
 
+	//선택된 컬러 이름과 색상을 표시하는 CSCEdit이지만 readonly 속성이고
+	//readonly 속성이라도 readonly 색상을 사용하지 않고 지정된 cr_back을 사용해서 표현해야 한다.
+	m_edit_color.set_use_readonly_color(false);
+
 	//m_static_color.draw_border(true, 1, Gdiplus::Color::Black);
 	//m_edit_color.set_line_align()에서는 height가 달라지지 않는데도 RestoreWindowPosition() 앞에서 호출하면 적용되지 않는다.
-	m_edit_color.set_text_color(gRGB(0, 0, 255));
-	m_edit_color.set_back_color(Gdiplus::Color::RosyBrown);
+	//m_edit_color.set_text_color(gRGB(0, 0, 255));
+	//m_edit_color.set_back_color(Gdiplus::Color::RosyBrown);
+
 	//m_edit_color.set_line_align(DT_CENTER | DT_VCENTER);
 
 	init_list();
@@ -143,6 +148,7 @@ BOOL CSCColorTableDlg::OnInitDialog()
 
 void CSCColorTableDlg::init_list()
 {
+	m_list0.SetExtendedStyle(LVS_EX_FULLROWSELECT);// | LVS_EX_DOUBLEBUFFER | LVS_EX_FLATSB);
 	m_list0.set_headings(_T("Index,40;Name,200;Hex,60;Decimal,100;Value,100"));
 	m_list0.load_column_width(&theApp, _T("color table list"));
 	m_list0.set_font_size(8);
@@ -152,7 +158,9 @@ void CSCColorTableDlg::init_list()
 	m_list0.set_draw_selected_border(true, 0, 2, Gdiplus::DashStyleDash);
 	m_list0.set_use_distinct_border_color();
 	m_list0.allow_sort(false);
+	m_list0.m_theme.cr_back_selected = Gdiplus::Color::Transparent;
 
+	m_list1.SetExtendedStyle(LVS_EX_FULLROWSELECT);// | LVS_EX_DOUBLEBUFFER | LVS_EX_FLATSB);
 	m_list1.set_headings(_T("Index,40;Name,200;Hex,60;Decimal,100;Value,100"));
 	m_list1.load_column_width(&theApp, _T("color table list"));
 	m_list1.set_font_size(8);
@@ -162,6 +170,7 @@ void CSCColorTableDlg::init_list()
 	m_list1.set_draw_selected_border(true, 0, 2, Gdiplus::DashStyleDash);
 	m_list1.set_use_distinct_border_color();
 	m_list1.allow_sort(false);
+	m_list1.m_theme.cr_back_selected = Gdiplus::Color::Transparent;
 
 	m_cr_list = CSCColorList::get_color_list();
 
@@ -329,13 +338,13 @@ void CSCColorTableDlg::fill_color_values(int r, int g, int b, int a, bool find_l
 		return;
 
 	//유사한 색인 경우는 EnsureVisible()만 해주고
-	int pos = cr_name.Find(_T("near = "));
+	int pos = cr_name.Find(_T("near : "));
 	int index;
 
 	if (pos == 0)
 	{
-		cr_name.Replace(_T("near = "), _T(""));
-		index = m_list0.find(cr_name, NULL, 0, -1, 1);
+		cr_name.Replace(_T("near : "), _T(""));
+		index = m_list0.find(cr_name, NULL, 0, -1, true, true, false, 1);
 
 		if (index >= 0)
 		{
@@ -343,7 +352,7 @@ void CSCColorTableDlg::fill_color_values(int r, int g, int b, int a, bool find_l
 		}
 		else
 		{
-			index = m_list1.find(cr_name, NULL, 0, -1, 1);
+			index = m_list1.find(cr_name, NULL, 0, -1, true, true, false, 1);
 
 			if (index >= 0)
 				m_list1.EnsureVisible(index, FALSE);
@@ -352,7 +361,7 @@ void CSCColorTableDlg::fill_color_values(int r, int g, int b, int a, bool find_l
 	//리스트에 존재하는 색인 경우는 선택상태로 표시한다.
 	else
 	{
-		index = m_list0.find(cr_name, NULL, 0, -1, 1);
+		index = m_list0.find(cr_name, NULL, 0, -1, true, true, false, 1);
 		if (index >= 0)
 		{
 			m_list1.select_item(-1, false, true, false);
@@ -361,7 +370,7 @@ void CSCColorTableDlg::fill_color_values(int r, int g, int b, int a, bool find_l
 		}
 		else
 		{
-			index = m_list1.find(cr_name, NULL, 0, -1, 1);
+			index = m_list1.find(cr_name, NULL, 0, -1, true, true, false, 1);
 			if (index >= 0)
 			{
 				m_list0.select_item(-1, false, true);

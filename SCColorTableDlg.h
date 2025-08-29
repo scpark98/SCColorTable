@@ -4,11 +4,10 @@
 
 #pragma once
 
-#include "ResizeCtrl.h"
-#include "CEdit/SCEdit/SCEdit.h"
-#include "CListCtrl/CVtListCtrlEx/VtListCtrlEx.h"
-
-#include "CIPAddressCtrl/SCIPAddressCtrl/SCIPAddressCtrl.h"
+#include "Common/ResizeCtrl.h"
+#include "Common/CEdit/SCEdit/SCEdit.h"
+#include "Common/CListCtrl/CVtListCtrlEx/VtListCtrlEx.h"
+#include "Common/CIPAddressCtrl/SCIPAddressCtrl/SCIPAddressCtrl.h"
 
 // CSCColorTableDlg 대화 상자
 class CSCColorTableDlg : public CDialogEx
