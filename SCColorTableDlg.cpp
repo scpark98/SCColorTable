@@ -12,7 +12,7 @@
 #define new DEBUG_NEW
 #endif
 
-#define SECOND_LIST_INDEX	66
+#define SECOND_LIST_START_INDEX	66
 
 // 응용 프로그램 정보에 사용되는 CAboutDlg 대화 상자입니다.
 
@@ -142,6 +142,9 @@ BOOL CSCColorTableDlg::OnInitDialog()
 
 	RestoreWindowPosition(&theApp, this);
 
+	m_initialized = true;
+
+	m_list0.select_item(0);
 
 	return TRUE;  // 포커스를 컨트롤에 설정하지 않으면 TRUE를 반환합니다.
 }
@@ -186,17 +189,17 @@ void CSCColorTableDlg::init_list()
 		hex = get_color_string(cr.ToCOLORREF());
 		rgb.Format(_T("%d, %d, %d"), cr.GetR(), cr.GetG(), cr.GetB());
 
-		if (i < SECOND_LIST_INDEX)
+		if (i < SECOND_LIST_START_INDEX)
 		{
 			index = m_list0.insert_item(i, -1, i2S(i), CString(m_cr_list[i].first.c_str()), hex, rgb, i2S(cr.GetValue(), true));
-			m_list0.set_back_color(index, -1, m_cr_list[i].second);
-			m_list0.set_text_color(index, -1, get_distinct_color(m_cr_list[i].second));
+			m_list0.set_back_color(index, -1, m_cr_list[i].second, false, false);
+			m_list0.set_text_color(index, -1, get_distinct_color(m_cr_list[i].second), false, false);
 		}
 		else
 		{
-			index = m_list1.insert_item(i - SECOND_LIST_INDEX, -1, i2S(i), CString(m_cr_list[i].first.c_str()), hex, rgb, i2S(cr.GetValue(), true));
-			m_list1.set_back_color(index, -1, m_cr_list[i].second);
-			m_list1.set_text_color(index, -1, get_distinct_color(m_cr_list[i].second));
+			index = m_list1.insert_item(i - SECOND_LIST_START_INDEX, -1, i2S(i), CString(m_cr_list[i].first.c_str()), hex, rgb, i2S(cr.GetValue(), true));
+			m_list1.set_back_color(index, -1, m_cr_list[i].second, false, false);
+			m_list1.set_text_color(index, -1, get_distinct_color(m_cr_list[i].second), false, false);
 		}
 	}
 }
@@ -520,6 +523,9 @@ void CSCColorTableDlg::OnLvnItemChangedList1(NMHDR* pNMHDR, LRESULT* pResult)
 
 LRESULT CSCColorTableDlg::on_message_CSCIPAddressCtrl(WPARAM wParam, LPARAM lParam)
 {
+	if (!m_initialized)
+		return 0;
+
 	int message = (int)wParam;
 
 	if (message == WM_KEYDOWN)
@@ -529,6 +535,13 @@ LRESULT CSCColorTableDlg::on_message_CSCIPAddressCtrl(WPARAM wParam, LPARAM lPar
 	else if (message == WM_KILLFOCUS)
 	{
 		TRACE(_T("WM_KILLFOCUS message on CSCIPAdddressCtrl\n"));
+		//WM_KILLFOCUS 되면 자동으로 현재 입력된 색상값으로 표시하기 위해 이 메시지를 추가했으나
+		//뭔가 m_list1이 반쯤 스크롤되어 표시되는 버그가 발생한다.
+		//이는 데이터가 모두 추가되기 전에 insert_item()에 의해 발생하는 듯하여
+		//m_initialized 플래그도 추가해봤으나 버그가 해결되지 않음.
+		//우선 WM_KILLFOCUS 이벤트에서는 그냥 리턴하도록 한다.
+		//CSCIPAddressCtrl에서는 숫자 입력 후 엔터키로 바로 색상을 표시할 수 있다.
+		return 0;
 	}
 	else if (message == IPN_FIELDCHANGED)
 	{

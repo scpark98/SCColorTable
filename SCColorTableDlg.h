@@ -37,6 +37,7 @@ protected:
 	CResizeCtrl				m_resize;
 	std::vector<std::pair<std::string, Gdiplus::Color>> m_cr_list;
 
+	bool					m_initialized = false;
 	void					init_list();
 
 	//a, r, g, b 값을 받아 4개의 폼에 맞게 변형하여 UI를 갱신시키고 해당 색을 리스트에서 찾아서 선택 상태로 표시한다.
