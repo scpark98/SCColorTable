@@ -140,6 +140,7 @@ BOOL CSCColorTableDlg::OnInitDialog()
 
 	init_list();
 
+	Wait(100);
 	RestoreWindowPosition(&theApp, this);
 
 	m_initialized = true;
