@@ -45,6 +45,12 @@ protected:
 
 	LRESULT					on_message_CSCIPAddressCtrl(WPARAM wParam, LPARAM lParam);
 
+//검색기능
+	int						m_search_index = 0;
+	CString					m_search_text;
+	int						m_found_count = 0;
+	void					search();
+
 // 구현입니다.
 protected:
 	HICON m_hIcon;

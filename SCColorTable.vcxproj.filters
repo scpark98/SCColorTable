@@ -75,6 +75,12 @@
     <ClInclude Include="..\Common\SCGdiplusBitmap.h">
       <Filter>Common</Filter>
     </ClInclude>
+    <ClInclude Include="SearchDlg.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\CComboBox\SCComboBox\SCComboBox.h">
+      <Filter>Common</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SCColorTable.cpp">
@@ -117,6 +123,12 @@
       <Filter>Common</Filter>
     </ClCompile>
     <ClCompile Include="..\Common\SCGdiplusBitmap.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="SearchDlg.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\CComboBox\SCComboBox\SCComboBox.cpp">
       <Filter>Common</Filter>
     </ClCompile>
   </ItemGroup>

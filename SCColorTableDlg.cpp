@@ -8,6 +8,8 @@
 #include "SCColorTableDlg.h"
 #include "afxdialogex.h"
 
+#include "SearchDlg.h"
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -154,7 +156,7 @@ void CSCColorTableDlg::init_list()
 {
 	m_list0.SetExtendedStyle(LVS_EX_FULLROWSELECT);// | LVS_EX_DOUBLEBUFFER | LVS_EX_FLATSB);
 	m_list0.set_headings(_T("Index,40;Name,200;Hex,60;Decimal,100;Value,100"));
-	m_list0.load_column_width(&theApp, _T("color table list"));
+	m_list0.restore_column_width(&theApp, _T("color table list"));
 	m_list0.set_font_size(8);
 	m_list0.set_header_height(28);
 	m_list0.set_line_height(30);
@@ -166,7 +168,7 @@ void CSCColorTableDlg::init_list()
 
 	m_list1.SetExtendedStyle(LVS_EX_FULLROWSELECT);// | LVS_EX_DOUBLEBUFFER | LVS_EX_FLATSB);
 	m_list1.set_headings(_T("Index,40;Name,200;Hex,60;Decimal,100;Value,100"));
-	m_list1.load_column_width(&theApp, _T("color table list"));
+	m_list1.restore_column_width(&theApp, _T("color table list"));
 	m_list1.set_font_size(8);
 	m_list1.set_header_height(28);
 	m_list1.set_line_height(30);
@@ -307,12 +309,85 @@ BOOL CSCColorTableDlg::PreTranslateMessage(MSG* pMsg)
 		switch (pMsg->wParam)
 		{
 			case VK_RETURN :
-				CSCColorTableDlg::OnBnClickedOk();
+				OnBnClickedOk();
+				return TRUE;
+			case 'F':
+				if (IsCtrlPressed())
+				{
+					CSearchDlg dlg;
+					if (dlg.DoModal() == IDOK)
+					{
+						m_search_index = 0;
+						m_found_count = 0;
+						m_search_text = dlg.get_text();
+						search();
+					}
+					return TRUE;
+				}
+				break;
+			case VK_F3:
+				search();
 				return TRUE;
 		}
 	}
 
 	return CDialogEx::PreTranslateMessage(pMsg);
+}
+
+void CSCColorTableDlg::search()
+{
+	int index = -1;
+
+	if (m_search_index < SECOND_LIST_START_INDEX)
+	{
+		index = m_list0.find(m_search_text, NULL, m_search_index, -1, true, false, false, col_name);
+		if (index >= 0)
+		{
+			//찾아진 항목을 선택 상태로 만들고 포커스까지 줘야만 선택 표시가 나타나는데
+			//막상 포커스를 주면 해당 항목의 이름이 다시 m_search_text로 사용되는 부작용이 있다.
+			//따라서 검색어를 입력하고 해당 검색어로만 계속 검색되도록 해야 한다.
+			TRACE(_T("found in list0, index = %d. %s\n"), index, m_list0.get_text(index, col_name));
+			m_search_index = index + 1;
+			m_list0.select_item(index, true, true);
+			m_list0.SetFocus();
+			m_found_count++;
+		}
+		else
+		{
+			TRACE(_T("not found in list0\n"));
+			m_search_index = SECOND_LIST_START_INDEX;
+			search();
+		}
+	}
+	else
+	{
+		index = m_list1.find(m_search_text, NULL, m_search_index - SECOND_LIST_START_INDEX, -1, true, false, false, col_name);
+		if (index >= 0)
+		{
+			TRACE(_T("found in list1, index = %d. %s\n"), index, m_list1.get_text(index, col_name));
+			m_search_index = SECOND_LIST_START_INDEX + index + 1;
+			m_found_count++;
+			m_list1.select_item(index, true, true);
+			m_list1.SetFocus();
+		}
+		else
+		{
+			TRACE(_T("not found in list1\n"));
+			m_search_index = 0;
+
+			if (m_found_count == 0)
+			{
+				//list0에도 없고 list1에도 없을 경우는 recursive search를 멈춰야 한다.
+				//하나 이상 매칭되는 항목이 있다면 F3을 눌러 도돌이 검색한다.
+				AfxMessageBox(_T("'") + m_search_text + _T("' 키워드가 포함된 색상이 없습니다."));
+				return;
+			}
+			else
+			{
+				search();
+			}
+		}
+	}
 }
 
 //a, r, g, b 값을 받아 4개의 폼에 맞게 변형하여 UI를 갱신시키고 해당 색을 리스트에서 찾아서 선택 상태로 표시한다.
