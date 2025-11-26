@@ -146,6 +146,9 @@
     <Image Include="res\SCColorTable.ico">
       <Filter>리소스 파일</Filter>
     </Image>
+    <Image Include="res\search.png">
+      <Filter>리소스 파일</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\Common\CListCtrl\CVtListCtrlEx\readme.txt">

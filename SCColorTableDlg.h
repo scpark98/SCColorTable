@@ -6,6 +6,7 @@
 
 #include "Common/ResizeCtrl.h"
 #include "Common/CEdit/SCEdit/SCEdit.h"
+#include "Common/CButton/GdiButton/GdiButton.h"
 #include "Common/CListCtrl/CVtListCtrlEx/VtListCtrlEx.h"
 #include "Common/CIPAddressCtrl/SCIPAddressCtrl/SCIPAddressCtrl.h"
 
@@ -45,7 +46,7 @@ protected:
 
 	LRESULT					on_message_CSCIPAddressCtrl(WPARAM wParam, LPARAM lParam);
 
-//검색기능
+//검색기능. Ctrl+F로 검색을 시작하고, F3를 눌러 계속해서 다음 항목 검색 결과를 표시한다. (기본 도돌이 검색)
 	int						m_search_index = 0;
 	CString					m_search_text;
 	int						m_found_count = 0;
@@ -79,4 +80,6 @@ public:
 	afx_msg void OnLvnItemChangedList(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnLvnItemChangedList1(NMHDR* pNMHDR, LRESULT* pResult);
 	CSCEdit m_edit_color;
+	CGdiButton m_button_search;
+	afx_msg void OnBnClickedButtonSearch();
 };

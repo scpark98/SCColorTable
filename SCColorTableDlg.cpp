@@ -14,6 +14,8 @@
 #define new DEBUG_NEW
 #endif
 
+//하나의 리스트로 구현하자니 좁고 길어지므로 2개의 리스트를 하나처럼 동작하도록 구현함.
+//두 번째 리스트의 시작 인덱스가 필요하다.
 #define SECOND_LIST_START_INDEX	66
 
 // 응용 프로그램 정보에 사용되는 CAboutDlg 대화 상자입니다.
@@ -69,6 +71,7 @@ void CSCColorTableDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_LIST, m_list0);
 	DDX_Control(pDX, IDC_LIST1, m_list1);
 	DDX_Control(pDX, IDC_EDIT_COLOR, m_edit_color);
+	DDX_Control(pDX, IDC_BUTTON_SEARCH, m_button_search);
 }
 
 BEGIN_MESSAGE_MAP(CSCColorTableDlg, CDialogEx)
@@ -85,6 +88,7 @@ BEGIN_MESSAGE_MAP(CSCColorTableDlg, CDialogEx)
 	ON_NOTIFY(LVN_ITEMCHANGED, IDC_LIST, &CSCColorTableDlg::OnLvnItemChangedList)
 	ON_NOTIFY(LVN_ITEMCHANGED, IDC_LIST1, &CSCColorTableDlg::OnLvnItemChangedList1)
 	ON_REGISTERED_MESSAGE(Message_CSCIPAddressCtrl, &CSCColorTableDlg::on_message_CSCIPAddressCtrl)
+	ON_BN_CLICKED(IDC_BUTTON_SEARCH, &CSCColorTableDlg::OnBnClickedButtonSearch)
 END_MESSAGE_MAP()
 
 
@@ -122,6 +126,7 @@ BOOL CSCColorTableDlg::OnInitDialog()
 	// TODO: 여기에 추가 초기화 작업을 추가합니다.
 	m_resize.Create(this);
 	m_resize.Add(IDC_EDIT_COLOR, 0, 0, 100, 0);
+	m_resize.Add(IDC_BUTTON_SEARCH, 100, 0, 0, 0);
 	m_resize.Add(IDC_LIST, 0, 0, 50, 100);
 	m_resize.Add(IDC_LIST1, 50, 0, 50, 100);
 	m_resize.SetMinimumTrackingSize(CSize(880, 400));
@@ -133,6 +138,12 @@ BOOL CSCColorTableDlg::OnInitDialog()
 	//readonly 속성이라도 readonly 색상을 사용하지 않고 지정된 cr_back을 사용해서 표현해야 한다.
 	m_edit_color.set_use_readonly_color(false);
 
+
+	m_button_search.add_image(IDB_SEARCH, IDB_SEARCH, IDB_SEARCH, IDB_SEARCH);
+	m_button_search.fit_to_image(true);
+	m_button_search.set_down_offset(1, 1);
+	m_button_search.set_back_color(get_sys_color(COLOR_3DFACE));
+	m_button_search.set_tooltip_text(_T("검색할 색상의 이름을 입력하려면 Ctrl+F,\n입력 후 계속 검색은 F3"));
 	//m_static_color.draw_border(true, 1, Gdiplus::Color::Black);
 	//m_edit_color.set_line_align()에서는 height가 달라지지 않는데도 RestoreWindowPosition() 앞에서 호출하면 적용되지 않는다.
 	//m_edit_color.set_text_color(gRGB(0, 0, 255));
@@ -148,6 +159,10 @@ BOOL CSCColorTableDlg::OnInitDialog()
 	m_initialized = true;
 
 	m_list0.select_item(0);
+
+	CString caption;
+	caption.Format(_T("SCColorTable (Ver. %s)"), get_file_property());
+	SetWindowText(caption);
 
 	return TRUE;  // 포커스를 컨트롤에 설정하지 않으면 TRUE를 반환합니다.
 }
@@ -189,7 +204,7 @@ void CSCColorTableDlg::init_list()
 	for (int i = 0; i < m_cr_list.size(); i++)
 	{
 		cr = m_cr_list[i].second;
-		hex = get_color_string(cr.ToCOLORREF());
+		hex = get_color_hexa_str(cr);
 		rgb.Format(_T("%d, %d, %d"), cr.GetR(), cr.GetG(), cr.GetB());
 
 		if (i < SECOND_LIST_START_INDEX)
@@ -264,7 +279,9 @@ void CSCColorTableDlg::OnBnClickedOk()
 
 	//IPControl에서 return키를 쳐도 여기에서 걸러지지 않는다. pWnd != &m_ip_rgba로 나온다. 메시지로 처리한다.
 	if (pWnd == &m_ip_rgba)
+	{
 		TRACE(_T("m_ip_rgba\n"));
+	}
 	else if (pWnd == &m_edit_argb)
 	{
 		TRACE(_T("m_edit_argb\n"));
@@ -336,6 +353,9 @@ BOOL CSCColorTableDlg::PreTranslateMessage(MSG* pMsg)
 
 void CSCColorTableDlg::search()
 {
+	if (m_search_text.IsEmpty())
+		return;
+
 	int index = -1;
 
 	if (m_search_index < SECOND_LIST_START_INDEX)
@@ -606,7 +626,7 @@ LRESULT CSCColorTableDlg::on_message_CSCIPAddressCtrl(WPARAM wParam, LPARAM lPar
 
 	if (message == WM_KEYDOWN)
 	{
-		TRACE(_T("key down message on CSCIPAdddressCtrl\n"));
+		TRACE(_T("key down message on CSCIPAdddressCtrl. key = %d\n"), (int)lParam);
 	}
 	else if (message == WM_KILLFOCUS)
 	{
@@ -630,4 +650,20 @@ LRESULT CSCColorTableDlg::on_message_CSCIPAddressCtrl(WPARAM wParam, LPARAM lPar
 	fill_color_values(r, g, b, a, true);
 
 	return 0;
+}
+void CSCColorTableDlg::OnBnClickedButtonSearch()
+{
+	if (m_search_text.IsEmpty())
+	{
+		CSearchDlg dlg;
+		if (dlg.DoModal() == IDOK)
+		{
+			m_search_index = 0;
+			m_found_count = 0;
+			m_search_text = dlg.get_text();
+		}
+	}
+
+	if (!m_search_text.IsEmpty())
+		search();
 }
