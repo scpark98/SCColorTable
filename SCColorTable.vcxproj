@@ -221,12 +221,14 @@
   <ItemGroup>
     <ClInclude Include="..\Common\CButton\GdiButton\GdiButton.h" />
     <ClInclude Include="..\Common\CComboBox\SCComboBox\SCComboBox.h" />
+    <ClInclude Include="..\Common\CDialog\SCShapeDlg\SCShapeDlg.h" />
     <ClInclude Include="..\Common\CEdit\SCEdit\SCEdit.h" />
     <ClInclude Include="..\Common\CIPAddressCtrl\SCIPAddressCtrl\SCIPAddressCtrl.h" />
     <ClInclude Include="..\Common\CListCtrl\CVtListCtrlEx\HeaderCtrlEx.h" />
     <ClInclude Include="..\Common\CListCtrl\CVtListCtrlEx\list_data.h" />
     <ClInclude Include="..\Common\CListCtrl\CVtListCtrlEx\VtListCtrlEx.h" />
     <ClInclude Include="..\Common\colors.h" />
+    <ClInclude Include="..\Common\data_structure\SCParagraph\SCParagraph.h" />
     <ClInclude Include="..\Common\Functions.h" />
     <ClInclude Include="..\Common\MemoryDC.h" />
     <ClInclude Include="..\Common\ResizeCtrl.h" />
@@ -248,6 +250,12 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="..\Common\CComboBox\SCComboBox\SCComboBox.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Common\CDialog\SCShapeDlg\SCShapeDlg.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
@@ -284,6 +292,12 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="..\Common\colors.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Common\data_structure\SCParagraph\SCParagraph.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
@@ -330,6 +344,8 @@
     <None Include="res\SCColorTable.rc2" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="res\clipboard copy (20x20).png" />
+    <Image Include="res\color-wheel.png" />
     <Image Include="res\SCColorTable.ico" />
     <Image Include="res\search.png" />
   </ItemGroup>

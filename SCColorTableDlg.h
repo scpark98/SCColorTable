@@ -9,6 +9,8 @@
 #include "Common/CButton/GdiButton/GdiButton.h"
 #include "Common/CListCtrl/CVtListCtrlEx/VtListCtrlEx.h"
 #include "Common/CIPAddressCtrl/SCIPAddressCtrl/SCIPAddressCtrl.h"
+#include "Common/CDialog/SCShapeDlg/SCShapeDlg.h"
+
 
 // CSCColorTableDlg 대화 상자
 class CSCColorTableDlg : public CDialogEx
@@ -52,6 +54,9 @@ protected:
 	int						m_found_count = 0;
 	void					search();
 
+	CSCShapeDlg				m_message;
+	void					show_message(CString message);
+
 // 구현입니다.
 protected:
 	HICON m_hIcon;
@@ -82,4 +87,8 @@ public:
 	CSCEdit m_edit_color;
 	CGdiButton m_button_search;
 	afx_msg void OnBnClickedButtonSearch();
+	CGdiButton m_button_clipboard_copy;
+	afx_msg void OnBnClickedButtonClipboardCopy();
+	CGdiButton m_button_color_wheel;
+	afx_msg void OnBnClickedButtonColorWheel();
 };

@@ -72,6 +72,8 @@ void CSCColorTableDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_LIST1, m_list1);
 	DDX_Control(pDX, IDC_EDIT_COLOR, m_edit_color);
 	DDX_Control(pDX, IDC_BUTTON_SEARCH, m_button_search);
+	DDX_Control(pDX, IDC_BUTTON_CLIPBOARD_COPY, m_button_clipboard_copy);
+	DDX_Control(pDX, IDC_BUTTON_COLOR_WHEEL, m_button_color_wheel);
 }
 
 BEGIN_MESSAGE_MAP(CSCColorTableDlg, CDialogEx)
@@ -89,6 +91,8 @@ BEGIN_MESSAGE_MAP(CSCColorTableDlg, CDialogEx)
 	ON_NOTIFY(LVN_ITEMCHANGED, IDC_LIST1, &CSCColorTableDlg::OnLvnItemChangedList1)
 	ON_REGISTERED_MESSAGE(Message_CSCIPAddressCtrl, &CSCColorTableDlg::on_message_CSCIPAddressCtrl)
 	ON_BN_CLICKED(IDC_BUTTON_SEARCH, &CSCColorTableDlg::OnBnClickedButtonSearch)
+	ON_BN_CLICKED(IDC_BUTTON_CLIPBOARD_COPY, &CSCColorTableDlg::OnBnClickedButtonClipboardCopy)
+	ON_BN_CLICKED(IDC_BUTTON_COLOR_WHEEL, &CSCColorTableDlg::OnBnClickedButtonColorWheel)
 END_MESSAGE_MAP()
 
 
@@ -126,6 +130,7 @@ BOOL CSCColorTableDlg::OnInitDialog()
 	// TODO: 여기에 추가 초기화 작업을 추가합니다.
 	m_resize.Create(this);
 	m_resize.Add(IDC_EDIT_COLOR, 0, 0, 100, 0);
+	m_resize.Add(IDC_BUTTON_COLOR_WHEEL, 100, 0, 0, 0);
 	m_resize.Add(IDC_BUTTON_SEARCH, 100, 0, 0, 0);
 	m_resize.Add(IDC_LIST, 0, 0, 50, 100);
 	m_resize.Add(IDC_LIST1, 50, 0, 50, 100);
@@ -138,18 +143,24 @@ BOOL CSCColorTableDlg::OnInitDialog()
 	//readonly 속성이라도 readonly 색상을 사용하지 않고 지정된 cr_back을 사용해서 표현해야 한다.
 	m_edit_color.set_use_readonly_color(false);
 
+	m_button_clipboard_copy.add_image(IDB_PNG_CLIPBOARD_COPY);
+	m_button_clipboard_copy.set_back_color(get_sys_color(COLOR_3DFACE), false);
+	m_button_clipboard_copy.set_tooltip_text(_T("RGBA 값을 콤마로 구분된 문자열로 클립보드에 복사"));
+
+	m_button_color_wheel.add_image(IDB_PNG_COLOR_WHEEL);
+	m_button_color_wheel.set_back_color(get_sys_color(COLOR_3DFACE), false);
+	m_button_color_wheel.set_tooltip_text(_T("컬러 팔레트에서 보기"));
 
 	m_button_search.add_image(IDB_SEARCH, IDB_SEARCH, IDB_SEARCH, IDB_SEARCH);
 	m_button_search.fit_to_image(true);
 	m_button_search.set_down_offset(1, 1);
 	m_button_search.set_back_color(get_sys_color(COLOR_3DFACE));
 	m_button_search.set_tooltip_text(_T("검색할 색상의 이름을 입력하려면 Ctrl+F,\n입력 후 계속 검색은 F3"));
-	//m_static_color.draw_border(true, 1, Gdiplus::Color::Black);
-	//m_edit_color.set_line_align()에서는 height가 달라지지 않는데도 RestoreWindowPosition() 앞에서 호출하면 적용되지 않는다.
-	//m_edit_color.set_text_color(gRGB(0, 0, 255));
-	//m_edit_color.set_back_color(Gdiplus::Color::RosyBrown);
 
-	//m_edit_color.set_line_align(DT_CENTER | DT_VCENTER);
+	m_message.set_text(this, _T(""), 24, Gdiplus::FontStyleBold, 4.0f, 2.4f);
+	m_message.set_stroke_color(Gdiplus::Color::Black);
+	m_message.set_alpha(192);
+	m_message.use_control(false);
 
 	init_list();
 
@@ -276,6 +287,7 @@ void CSCColorTableDlg::OnBnClickedOk()
 {
 	CWnd* pWnd = GetFocus();
 	Gdiplus::Color cr = Gdiplus::Color::Transparent;
+	CString text;
 
 	//IPControl에서 return키를 쳐도 여기에서 걸러지지 않는다. pWnd != &m_ip_rgba로 나온다. 메시지로 처리한다.
 	if (pWnd == &m_ip_rgba)
@@ -285,12 +297,41 @@ void CSCColorTableDlg::OnBnClickedOk()
 	else if (pWnd == &m_edit_argb)
 	{
 		TRACE(_T("m_edit_argb\n"));
-		cr.SetValue(_tcstoui64(m_edit_argb.get_text(), NULL, 16));
+		text = m_edit_argb.get_text();
+		text.Trim();
+
+		if (text.IsEmpty())
+			return;
+
+		if (text[0] == '#')
+			text = text.Mid(1);
+
+		if (text.GetLength() == 6)
+		{
+			//알파값이 빠진 6자리일 경우 FF를 앞에 붙여서 8자리로 만든다.
+			text = _T("FF") + text;
+		}
+		cr.SetValue(_tcstoui64(text, NULL, 16));
 	}
 	else if (pWnd == &m_edit_rgba)
 	{
 		TRACE(_T("m_edit_rgba\n"));
 		CString text = m_edit_rgba.get_text();
+
+		text.Trim();
+
+		if (text.IsEmpty())
+			return;
+
+		if (text[0] == '#')
+			text = text.Mid(1);
+
+		if (text.GetLength() == 6)
+		{
+			//알파값이 빠진 6자리일 경우 FF를 뒤에 붙여서 8자리로 만든다.
+			text = text + _T("FF");
+		}
+
 		CString alpha = text.Right(2);
 		text = alpha + text.Left(6);
 		cr.SetValue(_tcstoui64(text, NULL, 16));
@@ -430,6 +471,7 @@ void CSCColorTableDlg::fill_color_values(int r, int g, int b, int a, bool find_l
 	CString cr_name(CSCColorList::get_color_name(Gdiplus::Color(a, r, g, b), false).c_str());
 	//TRACE(_T("name = %s\n"), cr_name);
 
+	//edit box의 배경색은 현재 색상으로, 컬러 이름의 색상은 그 배경색과 대비되는 색상으로 설정한다.
 	m_edit_color.set_color(get_distinct_color(Gdiplus::Color(a, r, g, b)), Gdiplus::Color(a, r, g, b));
 	m_edit_color.set_text(cr_name);
 
@@ -666,4 +708,38 @@ void CSCColorTableDlg::OnBnClickedButtonSearch()
 
 	if (!m_search_text.IsEmpty())
 		search();
+}
+
+void CSCColorTableDlg::OnBnClickedButtonClipboardCopy()
+{
+	CString text = m_ip_rgba.get_text();
+	bool res = copy_to_clipboard(m_hWnd, text);
+	
+	if (res)
+		show_message(_T("클립보드로 복사됨"));
+	else
+		show_message(_T("클립보드 복사 실패"));
+}
+
+void CSCColorTableDlg::show_message(CString message)
+{
+	m_message.set_text(message);
+	m_message.CenterWindow();
+	m_message.fade_in(0, 1000, true);
+	SetFocus();
+}
+
+void CSCColorTableDlg::OnBnClickedButtonColorWheel()
+{
+	Gdiplus::Color gcr = m_edit_color.get_back_color();
+	COLORREF cr = gcr.ToCOLORREF();
+
+	CMFCColorDialog dlg(cr, 0, this);
+	if (dlg.DoModal() == IDOK)
+	{
+		cr = dlg.GetColor();
+		gcr.SetFromCOLORREF(cr);
+		CString color_name = get_nearest_color_name(cr);
+		fill_color_values(gcr.GetR(), gcr.GetG(), gcr.GetB(), 255, true);
+	}
 }

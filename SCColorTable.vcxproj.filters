@@ -81,6 +81,12 @@
     <ClInclude Include="..\Common\CComboBox\SCComboBox\SCComboBox.h">
       <Filter>Common</Filter>
     </ClInclude>
+    <ClInclude Include="..\Common\CDialog\SCShapeDlg\SCShapeDlg.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\data_structure\SCParagraph\SCParagraph.h">
+      <Filter>Common</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SCColorTable.cpp">
@@ -131,6 +137,12 @@
     <ClCompile Include="..\Common\CComboBox\SCComboBox\SCComboBox.cpp">
       <Filter>Common</Filter>
     </ClCompile>
+    <ClCompile Include="..\Common\CDialog\SCShapeDlg\SCShapeDlg.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\data_structure\SCParagraph\SCParagraph.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="SCColorTable.rc">
@@ -147,6 +159,12 @@
       <Filter>리소스 파일</Filter>
     </Image>
     <Image Include="res\search.png">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="res\clipboard copy (20x20).png">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="res\color-wheel.png">
       <Filter>리소스 파일</Filter>
     </Image>
   </ItemGroup>
