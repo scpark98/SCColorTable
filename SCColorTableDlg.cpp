@@ -734,7 +734,7 @@ void CSCColorTableDlg::OnBnClickedButtonColorWheel()
 	Gdiplus::Color cr = m_edit_color.get_back_color();
 	
 	CSCColorPicker dlg;
-	if (dlg.DoModal(this, _T("Color Picker"), cr) == IDCANCEL)
+	if (dlg.DoModal(this, cr, _T("Color Picker")) == IDCANCEL)
 		return;
 
 	cr = dlg.get_selected_color();
