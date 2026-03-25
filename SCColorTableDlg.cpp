@@ -9,6 +9,7 @@
 #include "afxdialogex.h"
 
 #include "SearchDlg.h"
+#include "Common/CDialog/CSCColorPicker/SCColorPicker.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -155,7 +156,7 @@ BOOL CSCColorTableDlg::OnInitDialog()
 	m_button_search.fit_to_image(true);
 	m_button_search.set_down_offset(1, 1);
 	m_button_search.set_back_color(get_sys_color(COLOR_3DFACE));
-	m_button_search.set_tooltip_text(_T("검색할 색상의 이름을 입력하려면 Ctrl+F,\n입력 후 계속 검색은 F3"));
+	m_button_search.set_tooltip_text(_T("검색할 색상의 이름을 입력하려면 Ctrl+F,\n입력 후 다음 검색은 버튼클릭 또는 F3 키"));
 
 	m_message.set_text(this, _T(""), 24, Gdiplus::FontStyleBold, 4.0f, 2.4f);
 	m_message.set_stroke_color(Gdiplus::Color::Black);
@@ -222,13 +223,13 @@ void CSCColorTableDlg::init_list()
 		{
 			index = m_list0.insert_item(i, -1, i2S(i), CString(m_cr_list[i].first.c_str()), hex, rgb, i2S(cr.GetValue(), true));
 			m_list0.set_back_color(index, -1, m_cr_list[i].second, false, false);
-			m_list0.set_text_color(index, -1, get_distinct_color(m_cr_list[i].second), false, false);
+			m_list0.set_text_color(index, -1, get_distinct_bw_color(m_cr_list[i].second), false, false);
 		}
 		else
 		{
 			index = m_list1.insert_item(i - SECOND_LIST_START_INDEX, -1, i2S(i), CString(m_cr_list[i].first.c_str()), hex, rgb, i2S(cr.GetValue(), true));
 			m_list1.set_back_color(index, -1, m_cr_list[i].second, false, false);
-			m_list1.set_text_color(index, -1, get_distinct_color(m_cr_list[i].second), false, false);
+			m_list1.set_text_color(index, -1, get_distinct_bw_color(m_cr_list[i].second), false, false);
 		}
 	}
 }
@@ -472,7 +473,7 @@ void CSCColorTableDlg::fill_color_values(int r, int g, int b, int a, bool find_l
 	//TRACE(_T("name = %s\n"), cr_name);
 
 	//edit box의 배경색은 현재 색상으로, 컬러 이름의 색상은 그 배경색과 대비되는 색상으로 설정한다.
-	m_edit_color.set_color(get_distinct_color(Gdiplus::Color(a, r, g, b)), Gdiplus::Color(a, r, g, b));
+	m_edit_color.set_color(get_distinct_bw_color(Gdiplus::Color(a, r, g, b)), Gdiplus::Color(a, r, g, b));
 	m_edit_color.set_text(cr_name);
 
 	if (!find_list)
@@ -706,8 +707,7 @@ void CSCColorTableDlg::OnBnClickedButtonSearch()
 		}
 	}
 
-	if (!m_search_text.IsEmpty())
-		search();
+	search();
 }
 
 void CSCColorTableDlg::OnBnClickedButtonClipboardCopy()
@@ -731,15 +731,12 @@ void CSCColorTableDlg::show_message(CString message)
 
 void CSCColorTableDlg::OnBnClickedButtonColorWheel()
 {
-	Gdiplus::Color gcr = m_edit_color.get_back_color();
-	COLORREF cr = gcr.ToCOLORREF();
+	Gdiplus::Color cr = m_edit_color.get_back_color();
+	
+	CSCColorPicker dlg;
+	if (dlg.DoModal(this, _T("Color Picker"), cr) == IDCANCEL)
+		return;
 
-	CMFCColorDialog dlg(cr, 0, this);
-	if (dlg.DoModal() == IDOK)
-	{
-		cr = dlg.GetColor();
-		gcr.SetFromCOLORREF(cr);
-		CString color_name = get_nearest_color_name(cr);
-		fill_color_values(gcr.GetR(), gcr.GetG(), gcr.GetB(), 255, true);
-	}
+	cr = dlg.get_selected_color();
+	fill_color_values(cr.GetR(), cr.GetG(), cr.GetB(), 255, true);
 }
