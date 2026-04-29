@@ -20,6 +20,9 @@ class CSCColorTableApp : public CWinApp
 public:
 	CSCColorTableApp();
 
+protected:
+	bool	check_new_version_itself();
+
 // 재정의입니다.
 public:
 	virtual BOOL InitInstance();

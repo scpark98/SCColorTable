@@ -68,6 +68,34 @@ BOOL CSCColorTableApp::InitInstance()
 	// 적절한 내용으로 수정해야 합니다.
 	SetRegistryKey(_T("Legends Software"));
 
+
+	//서버에서 새 버전이 존재하는지 확인
+	CRequestUrlParams params(_T("https://dev-admin.linkmemine.com/download/checklist.json"));
+	request_url(&params);
+
+	if (params.status == HTTP_STATUS_OK)
+	{
+		bool is_new_version_exists = check_new_version_itself();
+		if (is_new_version_exists)
+		{
+			if (run_self_update_batch())
+			{
+				Wait(1000);
+				return FALSE;
+			}
+
+			TRACE(_T("run_self_update_batch() 실패. 현재 버전으로 실행합니다.\n"));
+		}
+		else
+		{
+			TRACE(_T("현재 버전이 최신 버전입니다.\n"));
+		}
+	}
+	else
+	{
+		TRACE(_T("서버 연결 실패. status = %d(%s). 현재 버전으로 실행합니다.\n"), params.status, params.result);
+	}
+
 	CSCColorTableDlg dlg;
 	m_pMainWnd = &dlg;
 	INT_PTR nResponse = dlg.DoModal();
@@ -102,3 +130,12 @@ BOOL CSCColorTableApp::InitInstance()
 	return FALSE;
 }
 
+bool CSCColorTableApp::check_new_version_itself()
+{
+	//서버에서 새 버전이 존재하는지 확인하는 로직을 구현한다.
+	//예시에서는 임의 파일이 존재하면 새버전이 있다고 판단하도록 테스트한다.
+	CString check_file_path;
+	check_file_path.Format(_T("%s_patch_temp"), get_exe_filename());
+
+	return PathFileExists(check_file_path);
+}
