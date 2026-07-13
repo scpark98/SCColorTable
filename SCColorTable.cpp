@@ -70,30 +70,33 @@ BOOL CSCColorTableApp::InitInstance()
 
 
 	//서버에서 새 버전이 존재하는지 확인
-	CRequestUrlParams params(_T("https://dev-admin.linkmemine.com/download/checklist.json"));
-	request_url(&params);
-
-	if (params.status == HTTP_STATUS_OK)
+	if (is_server_reachable(_T("dev-admin.linkmemine.com"), 443, 1000))
 	{
-		bool is_new_version_exists = check_new_version_itself();
-		if (is_new_version_exists)
-		{
-			if (run_self_update_batch())
-			{
-				Wait(1000);
-				return FALSE;
-			}
+		CRequestUrlParams params(_T("https://dev-admin.linkmemine.com/download/checklist.json"));
+		request_url(&params);
 
-			TRACE(_T("run_self_update_batch() 실패. 현재 버전으로 실행합니다.\n"));
+		if (params.status == HTTP_STATUS_OK)
+		{
+			bool is_new_version_exists = check_new_version_itself();
+			if (is_new_version_exists)
+			{
+				if (run_self_update_batch())
+				{
+					Wait(1000);
+					return FALSE;
+				}
+
+				TRACE(_T("run_self_update_batch() 실패. 현재 버전으로 실행합니다.\n"));
+			}
+			else
+			{
+				TRACE(_T("현재 버전이 최신 버전입니다.\n"));
+			}
 		}
 		else
 		{
-			TRACE(_T("현재 버전이 최신 버전입니다.\n"));
+			TRACE(_T("서버 연결 실패. status = %d(%s). 현재 버전으로 실행합니다.\n"), params.status, params.result);
 		}
-	}
-	else
-	{
-		TRACE(_T("서버 연결 실패. status = %d(%s). 현재 버전으로 실행합니다.\n"), params.status, params.result);
 	}
 
 	CSCColorTableDlg dlg;
