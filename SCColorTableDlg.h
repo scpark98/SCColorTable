@@ -7,7 +7,7 @@
 #include "Common/ResizeCtrl.h"
 #include "Common/CEdit/SCEdit/SCEdit.h"
 #include "Common/CButton/GdiButton/GdiButton.h"
-#include "Common/CListCtrl/CVtListCtrlEx/VtListCtrlEx.h"
+#include "Common/CListCtrl/CSCListCtrl/SCListCtrl.h"
 #include "Common/CIPAddressCtrl/SCIPAddressCtrl/SCIPAddressCtrl.h"
 #include "Common/CDialog/SCShapeDlg/SCShapeDlg.h"
 
@@ -74,8 +74,8 @@ public:
 	CSCEdit m_edit_argb;
 	CSCEdit m_edit_rgba;
 	CSCEdit m_edit_int;
-	CVtListCtrlEx m_list0;
-	CVtListCtrlEx m_list1;
+	CSCListCtrl m_list0;
+	CSCListCtrl m_list1;
 	afx_msg void OnWindowPosChanged(WINDOWPOS* lpwndpos);
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 	afx_msg void OnIpnFieldchangedRgba(NMHDR* pNMHDR, LRESULT* pResult);

@@ -1,52 +1,43 @@
-<?xml version="1.0" encoding="utf-8"?>
+ï»¿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="¼Ò½º ÆÄÀÏ">
+    <Filter Include="ì†ŒìŠ¤ íŒŒì¼">
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="Çì´õ ÆÄÀÏ">
+    <Filter Include="í—¤ë” íŒŒì¼">
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
     </Filter>
-    <Filter Include="¸®¼Ò½º ÆÄÀÏ">
+    <Filter Include="ë¦¬ì†ŒìŠ¤ íŒŒì¼">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
     <Filter Include="Common">
       <UniqueIdentifier>{345b4f68-79cc-428f-a03a-247acca7cf5c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Common\CVtListCtrlEx">
-      <UniqueIdentifier>{f1ee0ac7-47b8-41ad-b441-2d61542732d1}</UniqueIdentifier>
+    <Filter Include="Common\CSCListCtrl">
+      <UniqueIdentifier>{47caca94-61c1-4559-bf27-e226ef1e802c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SCColorTable.h">
-      <Filter>Çì´õ ÆÄÀÏ</Filter>
+      <Filter>í—¤ë” íŒŒì¼</Filter>
     </ClInclude>
     <ClInclude Include="SCColorTableDlg.h">
-      <Filter>Çì´õ ÆÄÀÏ</Filter>
+      <Filter>í—¤ë” íŒŒì¼</Filter>
     </ClInclude>
     <ClInclude Include="framework.h">
-      <Filter>Çì´õ ÆÄÀÏ</Filter>
+      <Filter>í—¤ë” íŒŒì¼</Filter>
     </ClInclude>
     <ClInclude Include="targetver.h">
-      <Filter>Çì´õ ÆÄÀÏ</Filter>
+      <Filter>í—¤ë” íŒŒì¼</Filter>
     </ClInclude>
     <ClInclude Include="Resource.h">
-      <Filter>Çì´õ ÆÄÀÏ</Filter>
+      <Filter>í—¤ë” íŒŒì¼</Filter>
     </ClInclude>
     <ClInclude Include="pch.h">
-      <Filter>Çì´õ ÆÄÀÏ</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Common\CListCtrl\CVtListCtrlEx\list_data.h">
-      <Filter>Common\CVtListCtrlEx</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Common\CListCtrl\CVtListCtrlEx\VtListCtrlEx.h">
-      <Filter>Common\CVtListCtrlEx</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Common\CListCtrl\CVtListCtrlEx\HeaderCtrlEx.h">
-      <Filter>Common\CVtListCtrlEx</Filter>
+      <Filter>í—¤ë” íŒŒì¼</Filter>
     </ClInclude>
     <ClInclude Include="..\Common\ResizeCtrl.h">
       <Filter>Common</Filter>
@@ -76,7 +67,7 @@
       <Filter>Common</Filter>
     </ClInclude>
     <ClInclude Include="SearchDlg.h">
-      <Filter>Çì´õ ÆÄÀÏ</Filter>
+      <Filter>í—¤ë” íŒŒì¼</Filter>
     </ClInclude>
     <ClInclude Include="..\Common\CComboBox\SCComboBox\SCComboBox.h">
       <Filter>Common</Filter>
@@ -102,25 +93,25 @@
     <ClInclude Include="..\Common\CEdit\CSCStaticEdit\SCStaticEdit.h">
       <Filter>Common</Filter>
     </ClInclude>
+    <ClInclude Include="..\Common\CListCtrl\CSCListCtrl\SCHeaderCtrl.h">
+      <Filter>Common\CSCListCtrl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\CListCtrl\CSCListCtrl\SCListCtrl.h">
+      <Filter>Common\CSCListCtrl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\CListCtrl\CSCListCtrl\list_data.h">
+      <Filter>Common\CSCListCtrl</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SCColorTable.cpp">
-      <Filter>¼Ò½º ÆÄÀÏ</Filter>
+      <Filter>ì†ŒìŠ¤ íŒŒì¼</Filter>
     </ClCompile>
     <ClCompile Include="SCColorTableDlg.cpp">
-      <Filter>¼Ò½º ÆÄÀÏ</Filter>
+      <Filter>ì†ŒìŠ¤ íŒŒì¼</Filter>
     </ClCompile>
     <ClCompile Include="pch.cpp">
-      <Filter>¼Ò½º ÆÄÀÏ</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Common\CListCtrl\CVtListCtrlEx\VtListCtrlEx.cpp">
-      <Filter>Common\CVtListCtrlEx</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Common\CListCtrl\CVtListCtrlEx\HeaderCtrlEx.cpp">
-      <Filter>Common\CVtListCtrlEx</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Common\CListCtrl\CVtListCtrlEx\list_data.cpp">
-      <Filter>Common\CVtListCtrlEx</Filter>
+      <Filter>ì†ŒìŠ¤ íŒŒì¼</Filter>
     </ClCompile>
     <ClCompile Include="..\Common\ResizeCtrl.cpp">
       <Filter>Common</Filter>
@@ -147,7 +138,7 @@
       <Filter>Common</Filter>
     </ClCompile>
     <ClCompile Include="SearchDlg.cpp">
-      <Filter>¼Ò½º ÆÄÀÏ</Filter>
+      <Filter>ì†ŒìŠ¤ íŒŒì¼</Filter>
     </ClCompile>
     <ClCompile Include="..\Common\CComboBox\SCComboBox\SCComboBox.cpp">
       <Filter>Common</Filter>
@@ -167,34 +158,44 @@
     <ClCompile Include="..\Common\CSliderCtrl\SCSliderCtrl\SCSliderCtrl.cpp">
       <Filter>Common</Filter>
     </ClCompile>
+    <ClCompile Include="..\Common\CEdit\CSCStaticEdit\SCStaticEdit.cpp">
+      <Filter>ì†ŒìŠ¤ íŒŒì¼</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\CScrollbar\SCScrollbar\SCScrollbar.cpp">
+      <Filter>ì†ŒìŠ¤ íŒŒì¼</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\CListCtrl\CSCListCtrl\SCHeaderCtrl.cpp">
+      <Filter>Common\CSCListCtrl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\CListCtrl\CSCListCtrl\SCListCtrl.cpp">
+      <Filter>Common\CSCListCtrl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\CListCtrl\CSCListCtrl\list_data.cpp">
+      <Filter>Common\CSCListCtrl</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="SCColorTable.rc">
-      <Filter>¸®¼Ò½º ÆÄÀÏ</Filter>
+      <Filter>ë¦¬ì†ŒìŠ¤ íŒŒì¼</Filter>
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="res\SCColorTable.rc2">
-      <Filter>¸®¼Ò½º ÆÄÀÏ</Filter>
+      <Filter>ë¦¬ì†ŒìŠ¤ íŒŒì¼</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\SCColorTable.ico">
-      <Filter>¸®¼Ò½º ÆÄÀÏ</Filter>
+      <Filter>ë¦¬ì†ŒìŠ¤ íŒŒì¼</Filter>
     </Image>
     <Image Include="res\search.png">
-      <Filter>¸®¼Ò½º ÆÄÀÏ</Filter>
+      <Filter>ë¦¬ì†ŒìŠ¤ íŒŒì¼</Filter>
     </Image>
     <Image Include="res\clipboard copy (20x20).png">
-      <Filter>¸®¼Ò½º ÆÄÀÏ</Filter>
+      <Filter>ë¦¬ì†ŒìŠ¤ íŒŒì¼</Filter>
     </Image>
     <Image Include="res\color-wheel.png">
-      <Filter>¸®¼Ò½º ÆÄÀÏ</Filter>
+      <Filter>ë¦¬ì†ŒìŠ¤ íŒŒì¼</Filter>
     </Image>
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="..\Common\CListCtrl\CVtListCtrlEx\readme.txt">
-      <Filter>Common\CVtListCtrlEx</Filter>
-    </Text>
   </ItemGroup>
 </Project>
