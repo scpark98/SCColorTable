@@ -41,6 +41,10 @@ protected:
 	std::vector<std::pair<std::string, Gdiplus::Color>> m_cr_list;
 
 	bool					m_initialized = false;
+
+	//20260724 by claude. 입력값으로 리스트 항목을 선택하는 동안 true. LVN_ITEMCHANGED 핸들러가
+	//리스트 행의 색으로 입력값(특히 알파)을 되덮는 것을 막는다.
+	bool					m_updating_from_input = false;
 	void					init_list();
 
 	//a, r, g, b 값을 받아 4개의 폼에 맞게 변형하여 UI를 갱신시키고 해당 색을 리스트에서 찾아서 선택 상태로 표시한다.

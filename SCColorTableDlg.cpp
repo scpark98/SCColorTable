@@ -287,15 +287,23 @@ HCURSOR CSCColorTableDlg::OnQueryDragIcon()
 void CSCColorTableDlg::OnBnClickedOk()
 {
 	CWnd* pWnd = GetFocus();
+
+	if (pWnd == NULL)
+		return;
+
+	//IPControl에서 return키를 쳐도 여기에서 걸러지지 않는다. pWnd != &m_ip_rgba로 나온다. 메시지로 처리한다.
+	//20260724 by claude. IP 컨트롤은 내부 edit 4개가 실제 포커스를 가지므로 부모까지 올려 판정한다.
+	//값 반영은 on_message_CSCIPAddressCtrl이 담당하므로 여기서는 빠져나간다.
+	if (pWnd == &m_ip_rgba || pWnd->GetParent() == &m_ip_rgba)
+	{
+		TRACE(_T("m_ip_rgba\n"));
+		return;
+	}
+
 	Gdiplus::Color cr = Gdiplus::Color::Transparent;
 	CString text;
 
-	//IPControl에서 return키를 쳐도 여기에서 걸러지지 않는다. pWnd != &m_ip_rgba로 나온다. 메시지로 처리한다.
-	if (pWnd == &m_ip_rgba)
-	{
-		TRACE(_T("m_ip_rgba\n"));
-	}
-	else if (pWnd == &m_edit_argb)
+	if (pWnd == &m_edit_argb)
 	{
 		TRACE(_T("m_edit_argb\n"));
 		text = m_edit_argb.get_text();
@@ -340,7 +348,25 @@ void CSCColorTableDlg::OnBnClickedOk()
 	else if (pWnd == &m_edit_int)
 	{
 		TRACE(_T("m_edit_int\n"));
-		cr.SetValue(_ttoi64(m_edit_int.get_text()));
+		text = m_edit_int.get_text();
+		text.Trim();
+
+		//20260724 by claude. 디버거와 이 앱의 Value 컬럼 모두 정수를 3자리마다 콤마를 넣어 표시한다.
+		//그대로 붙여넣으면 _ttoi64가 첫 콤마에서 멈춰 4,291,237,253이 4로 읽히므로 제거한다.
+		text.Remove(_T(','));
+
+		if (text.IsEmpty())
+			return;
+
+		//20260724 by claude. 부호 있는 int32로 표시하는 디버거(-1 = 0xFFFFFFFF)의 값을 그대로 받기 위해
+		//64비트로 읽어 32비트로 절단한다. 2의 보수 절단 결과가 곧 원하는 ARGB 값이다.
+		cr.SetValue((Gdiplus::ARGB)_ttoi64(text));
+	}
+	//20260724 by claude. 위 세 입력 컨트롤이 아닌 곳에서 Enter를 치면 cr이 Transparent인 채로
+	//흘러내려가 표시 중이던 색을 지워버렸다. 해당 컨트롤이 아니면 아무것도 하지 않는다.
+	else
+	{
+		return;
 	}
 
 	fill_color_values(cr.GetR(), cr.GetG(), cr.GetB(), cr.GetA(), true);
@@ -503,7 +529,11 @@ void CSCColorTableDlg::fill_color_values(int r, int g, int b, int a, bool find_l
 	//리스트에 존재하는 색인 경우는 선택상태로 표시한다.
 	else
 	{
-		index = m_list0.find(cr_name, NULL, 0, -1, true, true, false, 1);
+		//20260724 by claude. select_item()이 LVN_ITEMCHANGED를 일으켜 OnLvnItemChangedList가
+		//리스트 행의 색(알파 255)으로 방금 입력한 값을 덮어쓴다. 입력한 알파를 지키려고 콜백을 막는다.
+		m_updating_from_input = true;
+
+		index = m_list0.find(cr_name, NULL, 0, -1, true, true, false, col_name);
 		if (index >= 0)
 		{
 			m_list1.select_item(-1, false, true, false);
@@ -512,7 +542,7 @@ void CSCColorTableDlg::fill_color_values(int r, int g, int b, int a, bool find_l
 		}
 		else
 		{
-			index = m_list1.find(cr_name, NULL, 0, -1, true, true, false, 1);
+			index = m_list1.find(cr_name, NULL, 0, -1, true, true, false, col_name);
 			if (index >= 0)
 			{
 				m_list0.select_item(-1, false, true);
@@ -520,6 +550,8 @@ void CSCColorTableDlg::fill_color_values(int r, int g, int b, int a, bool find_l
 				m_list1.SetFocus();
 			}
 		}
+
+		m_updating_from_input = false;
 	}
 }
 
@@ -625,6 +657,12 @@ void CSCColorTableDlg::OnLvnItemChangedList(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	LPNMLISTVIEW pNMLV = reinterpret_cast<LPNMLISTVIEW>(pNMHDR);
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	if (m_updating_from_input)
+	{
+		*pResult = 0;
+		return;
+	}
+
 	if ((pNMLV->uChanged & LVIF_STATE) && (pNMLV->uNewState & LVIS_SELECTED))
 	{
 		int item = pNMLV->iItem;
@@ -644,6 +682,11 @@ void CSCColorTableDlg::OnLvnItemChangedList1(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	LPNMLISTVIEW pNMLV = reinterpret_cast<LPNMLISTVIEW>(pNMHDR);
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	if (m_updating_from_input)
+	{
+		*pResult = 0;
+		return;
+	}
 
 	if ((pNMLV->uChanged & LVIF_STATE) && (pNMLV->uNewState & LVIS_SELECTED))
 	{

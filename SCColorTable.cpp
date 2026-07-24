@@ -70,7 +70,7 @@ BOOL CSCColorTableApp::InitInstance()
 
 
 	//서버에서 새 버전이 존재하는지 확인
-	if (is_server_reachable(_T("dev-admin.linkmemine.com"), 443, 1000))
+	if (false)//is_server_reachable(_T("dev-admin.linkmemine.com"), 443, 1000))
 	{
 		CRequestUrlParams params(_T("https://dev-admin.linkmemine.com/download/checklist.json"));
 		request_url(&params);
