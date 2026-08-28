@@ -150,7 +150,7 @@ BOOL CSCColorTableDlg::OnInitDialog()
 
 	m_button_color_wheel.add_image(IDB_PNG_COLOR_WHEEL);
 	m_button_color_wheel.set_back_color(get_sys_color(COLOR_3DFACE), false);
-	m_button_color_wheel.set_tooltip_text(_T("컬러 팔레트에서 보기"));
+	m_button_color_wheel.set_tooltip_text(_T("ColorPicker에서 보기"));
 
 	m_button_search.add_image(IDB_SEARCH, IDB_SEARCH, IDB_SEARCH, IDB_SEARCH);
 	m_button_search.fit_to_image(true);
@@ -361,6 +361,23 @@ void CSCColorTableDlg::OnBnClickedOk()
 		//20260724 by claude. 부호 있는 int32로 표시하는 디버거(-1 = 0xFFFFFFFF)의 값을 그대로 받기 위해
 		//64비트로 읽어 32비트로 절단한다. 2의 보수 절단 결과가 곧 원하는 ARGB 값이다.
 		cr.SetValue((Gdiplus::ARGB)_ttoi64(text));
+	}
+	//IDC_EDIT_COLOR는 선택된 색의 이름을 표시하는 칸이지만 read-only가 아니므로 이름을 직접 입력할 수 있다.
+	//여기에 "black"을 넣고 Enter를 치면 Ctrl+F 검색과 동일하게 리스트에서 찾아 선택/EnsureVisible한다.
+	//값(ARGB) 입력이 아니라 이름 검색이므로 아래 fill_color_values() 경로를 타지 않고 여기서 끝낸다.
+	else if (pWnd == &m_edit_color)
+	{
+		text = m_edit_color.get_text();
+		text.Trim();
+
+		if (text.IsEmpty())
+			return;
+
+		m_search_text = text;
+		m_search_index = 0;
+		m_found_count = 0;
+		search();
+		return;
 	}
 	//20260724 by claude. 위 세 입력 컨트롤이 아닌 곳에서 Enter를 치면 cr이 Transparent인 채로
 	//흘러내려가 표시 중이던 색을 지워버렸다. 해당 컨트롤이 아니면 아무것도 하지 않는다.
