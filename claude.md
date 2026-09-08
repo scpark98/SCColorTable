@@ -35,3 +35,18 @@ GDI+ 명명 색상(140여 개) 목록을 두 개의 리스트로 보여주고, A
 하도록 배선했다 (`OnBnClickedOk()`). 그 전에는 이 배선이 **존재한 적이 없다** — git 전체 히스토리
 확인. `CSCColorList::get_color()` 를 쓰지 않은 이유: 이름을 못 찾으면 조용히 Black 을 돌려주므로
 오타를 쳐도 Black 이 잡히는 오동작이 된다. `search()` 는 부분일치·F3 순회·미발견 메시지를 이미 갖췄다.
+
+---
+
+## 자체 패치 (Self Patch)
+
+2026-09-07 적용. 공통 모듈 `Common/system/CSCSelfPatch/SCSelfPatch.{h,cpp}` 를 쓴다 —
+`InitInstance` 앞부분에서 `m_self_patch.startup()`, `ExitInstance` 에서 `m_self_patch.shutdown()`.
+
+- 서버 폴더: `/download/tools/KoinoTools/SCColorTable` (`ss.linkmemine.com:443`)
+- 실행한 그 자리에서 패치한다. 정해진 설치 폴더가 없으므로 exe 를 어디에 두든 바로가기·시작프로그램 등록이 그대로 유효하다.
+- 부팅 자동 실행 등록은 하지 않는다.
+
+원리·배포 절차는 <https://koinodoc.atlassian.net/wiki/spaces/2HfRugOJ0HVK/pages/48562184> 참조.
+
+기존에 있던 `check_new_version_itself()` + `run_self_update_batch()` 실험 코드(`if (false)` 로 막혀 있었다)를 이것으로 대체했다.

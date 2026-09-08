@@ -9,6 +9,7 @@
 #endif
 
 #include "resource.h"		// 주 기호입니다.
+#include "Common/system/CSCSelfPatch/SCSelfPatch.h"
 
 
 // CSCColorTableApp:
@@ -21,7 +22,9 @@ public:
 	CSCColorTableApp();
 
 protected:
-	bool	check_new_version_itself();
+	//20260907 by claude. 자체 패치 — 시작 시 버전 검사. 교체는 실행한 그 자리에서.
+	//원리와 서버 구성은 Common/system/CSCSelfPatch/SCSelfPatch.h 주석 참조.
+	CSCSelfPatch	m_self_patch;
 
 // 재정의입니다.
 public:
@@ -30,6 +33,7 @@ public:
 // 구현입니다.
 
 	DECLARE_MESSAGE_MAP()
+	virtual int ExitInstance();
 };
 
 extern CSCColorTableApp theApp;
